@@ -1,0 +1,6 @@
+<form method="post" action="{% url 'task_move' task.pk %}" class="inline">
+  {% csrf_token %}
+  <input type="hidden" name="status" value="{{ to }}">
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <button type="submit" class="btn btn-sm{% if primary %} btn-primary{% endif %}">{{ label }}</button>
+</form>

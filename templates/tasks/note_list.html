@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Notes{% endblock %}
+{% block heading %}Notes{% endblock %}
+{% block actions %}<a href="{% url 'note_create' %}" class="btn btn-primary">New note</a>{% endblock %}
+
+{% block content %}
+<form method="get" class="toolbar" role="search">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search notes" aria-label="Search notes">
+  <button type="submit" class="btn">Search</button>
+  {% if q %}<a href="{% url 'note_list' %}" class="btn-quiet">Clear</a>{% endif %}
+</form>
+
+{% if notes %}
+<div class="notes">
+  {% for note in notes %}
+  <article class="note">
+    <h2 class="note-title"><a href="{% url 'note_update' note.pk %}">{{ note.title }}</a></h2>
+    {% if note.body %}<p class="note-body">{{ note.body|truncatewords:35 }}</p>{% endif %}
+    <footer class="note-foot">
+      {% if note.task %}<a class="chip" href="{% url 'task_update' note.task.pk %}">{{ note.task.title|truncatechars:28 }}</a>{% endif %}
+      <span class="due">{{ note.updated_at|date:"j M Y" }}</span>
+    </footer>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty">
+  {% if q %}
+  <h2>No notes match "{{ q }}"</h2>
+  <a href="{% url 'note_list' %}" class="btn">Clear search</a>
+  {% else %}
+  <h2>No notes yet</h2>
+  <p>Keep links, decisions and context next to the work they belong to.</p>
+  <a href="{% url 'note_create' %}" class="btn btn-primary">Write a note</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

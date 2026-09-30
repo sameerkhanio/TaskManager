@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Tasks{% endblock %}
+{% block heading %}Tasks{% endblock %}
+{% block actions %}<a href="{% url 'task_create' %}" class="btn btn-primary">New task</a>{% endblock %}
+
+{% block content %}
+<form method="get" class="toolbar" role="search">
+  <input type="search" name="q" value="{{ q }}" placeholder="Search tasks" aria-label="Search tasks">
+  <select name="status" aria-label="Status">
+    <option value="">All statuses</option>
+    {% for value, label in statuses %}<option value="{{ value }}" {% if value == current_status %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <select name="priority" aria-label="Priority">
+    <option value="">All priorities</option>
+    {% for value, label in priorities %}<option value="{{ value }}" {% if value == current_priority %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  <button type="submit" class="btn">Apply</button>
+  {% if q or current_status or current_priority %}<a href="{% url 'task_list' %}" class="btn-quiet">Clear</a>{% endif %}
+</form>
+
+{% if tasks %}
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Task</th><th>Status</th><th>Priority</th><th>Due</th><th class="col-actions"><span class="sr-only">Actions</span></th></tr>
+    </thead>
+    <tbody>
+      {% for task in tasks %}
+      <tr class="{% if task.status == 'done' %}is-done{% endif %}">
+        <td><a class="row-title" href="{% url 'task_update' task.pk %}">{{ task.title }}</a></td>
+        <td><span class="badge badge-{{ task.status }}">{{ task.get_status_display }}</span></td>
+        <td><span class="prio prio-{{ task.priority }}">{{ task.get_priority_display }}</span></td>
+        <td>{% if task.due_date %}<span class="due{% if task.is_overdue %} overdue{% endif %}">{{ task.due_date|date:"j M Y" }}</span>{% else %}<span class="due">None</span>{% endif %}</td>
+        <td class="col-actions">
+          <a href="{% url 'task_update' task.pk %}">Edit</a>
+          <a href="{% url 'task_delete' task.pk %}" class="link-danger">Delete</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if is_paginated %}
+<nav class="pager" aria-label="Pagination">
+  {% if page_obj.has_previous %}<a class="btn btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.previous_page_number }}">Previous</a>{% endif %}
+  <span>Page {{ page_obj.number }} of {{ paginator.num_pages }}</span>
+  {% if page_obj.has_next %}<a class="btn btn-sm" href="?{% if querystring %}{{ querystring }}&{% endif %}page={{ page_obj.next_page_number }}">Next</a>{% endif %}
+</nav>
+{% endif %}
+
+{% else %}
+<div class="empty">
+  {% if q or current_status or current_priority %}
+  <h2>No tasks match these filters</h2>
+  <p>Try a different search or clear the filters.</p>
+  <a href="{% url 'task_list' %}" class="btn">Clear filters</a>
+  {% else %}
+  <h2>No tasks yet</h2>
+  <p>Add your first task and it will show up here and on the board.</p>
+  <a href="{% url 'task_create' %}" class="btn btn-primary">Create a task</a>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}

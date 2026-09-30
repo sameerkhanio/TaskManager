@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit task{% else %}New task{% endif %}{% endblock %}
+{% block heading %}{% if object %}Edit task{% else %}New task{% endif %}{% endblock %}
+
+{% block content %}
+<form method="post" class="panel form-panel stack" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-error">{{ form.non_field_errors.0 }}</div>{% endif %}
+  {% include "partials/_field.html" with field=form.title %}
+  {% include "partials/_field.html" with field=form.description %}
+  <div class="field-row">
+    {% include "partials/_field.html" with field=form.status %}
+    {% include "partials/_field.html" with field=form.priority %}
+    {% include "partials/_field.html" with field=form.due_date %}
+  </div>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Save task</button>
+    <a href="{% url 'task_list' %}" class="btn btn-ghost">Cancel</a>
+    {% if object %}<a href="{% url 'task_delete' object.pk %}" class="btn btn-danger push-right">Delete</a>{% endif %}
+  </div>
+</form>
+{% endblock %}

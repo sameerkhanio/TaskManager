@@ -1,0 +1,4 @@
+# Production (AWS): base requirements + PostgreSQL driver for RDS.
+# Not needed on your laptop (SQLite is used there), which avoids the psycopg2 build error on Windows.
+-r requirements.txt
+psycopg[binary]>=3.1

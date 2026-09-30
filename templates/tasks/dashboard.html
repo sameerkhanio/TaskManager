@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block heading %}Dashboard{% endblock %}
+{% block actions %}<a href="{% url 'task_create' %}" class="btn btn-primary">New task</a>{% endblock %}
+
+{% block content %}
+<section class="panel stats" aria-label="Task counts">
+  <a class="stat" href="{% url 'task_list' %}?status=todo">
+    <span class="stat-num">{{ counts.todo }}</span>
+    <span class="stat-label"><i class="dot dot-todo"></i>To do</span>
+  </a>
+  <a class="stat" href="{% url 'task_list' %}?status=in_progress">
+    <span class="stat-num">{{ counts.in_progress }}</span>
+    <span class="stat-label"><i class="dot dot-in_progress"></i>In progress</span>
+  </a>
+  <a class="stat" href="{% url 'task_list' %}?status=done">
+    <span class="stat-num">{{ counts.done }}</span>
+    <span class="stat-label"><i class="dot dot-done"></i>Done</span>
+  </a>
+  <div class="stat{% if counts.overdue %} stat-alert{% endif %}">
+    <span class="stat-num">{{ counts.overdue }}</span>
+    <span class="stat-label"><i class="dot dot-overdue"></i>Overdue</span>
+  </div>
+</section>
+
+{% if counts.total %}
+<section class="progress" aria-label="Progress">
+  <div class="bar" role="img" aria-label="{{ counts.done_pct }} percent of tasks done">
+    <span class="seg seg-done" style="flex: {{ counts.done }}"></span>
+    <span class="seg seg-in_progress" style="flex: {{ counts.in_progress }}"></span>
+    <span class="seg seg-todo" style="flex: {{ counts.todo }}"></span>
+  </div>
+  <p class="progress-text">{{ counts.done_pct }}% of {{ counts.total }} task{{ counts.total|pluralize }} done</p>
+</section>
+{% endif %}
+
+<div class="two-col">
+  <section class="panel">
+    <h2 class="panel-title">Needs attention</h2>
+    {% if attention %}
+    <ul class="rows">
+      {% for task in attention %}
+      <li class="row">
+        <i class="dot dot-{{ task.status }}"></i>
+        <a class="row-title" href="{% url 'task_update' task.pk %}">{{ task.title }}</a>
+        <span class="row-meta">{% include "partials/_task_meta.html" %}</span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="empty-inline">Nothing overdue or due in the next 7 days.</p>
+    {% endif %}
+  </section>
+
+  <section class="panel">
+    <h2 class="panel-title">Recently updated</h2>
+    {% if recent %}
+    <ul class="rows">
+      {% for task in recent %}
+      <li class="row">
+        <i class="dot dot-{{ task.status }}"></i>
+        <a class="row-title" href="{% url 'task_update' task.pk %}">{{ task.title }}</a>
+        <span class="row-meta"><span class="due">{{ task.updated_at|timesince }} ago</span></span>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty-inline">
+      <p>You have no tasks yet.</p>
+      <a href="{% url 'task_create' %}" class="btn btn-primary btn-sm">Create your first task</a>
+    </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

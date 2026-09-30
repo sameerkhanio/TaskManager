@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit note{% else %}New note{% endif %}{% endblock %}
+{% block heading %}{% if object %}Edit note{% else %}New note{% endif %}{% endblock %}
+
+{% block content %}
+<form method="post" class="panel form-panel stack" novalidate>
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="form-error">{{ form.non_field_errors.0 }}</div>{% endif %}
+  {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary">Save note</button>
+    <a href="{% url 'note_list' %}" class="btn btn-ghost">Cancel</a>
+    {% if object %}<a href="{% url 'note_delete' object.pk %}" class="btn btn-danger push-right">Delete</a>{% endif %}
+  </div>
+</form>
+{% endblock %}

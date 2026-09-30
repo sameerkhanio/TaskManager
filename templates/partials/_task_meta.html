@@ -1,0 +1,2 @@
+<span class="prio prio-{{ task.priority }}">{{ task.get_priority_display }}</span>
+{% if task.due_date %}<span class="due{% if task.is_overdue %} overdue{% endif %}">{% if task.is_overdue %}Overdue, {% endif %}{{ task.due_date|date:"j M" }}</span>{% endif %}

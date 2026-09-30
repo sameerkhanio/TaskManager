@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Board{% endblock %}
+{% block heading %}Board{% endblock %}
+{% block actions %}<a href="{% url 'task_create' %}" class="btn btn-primary">New task</a>{% endblock %}
+
+{% block content %}
+<div class="board">
+  {% for column in columns %}
+  <section class="column column-{{ column.value }}" aria-label="{{ column.label }}">
+    <header class="column-head">
+      <h2><i class="dot dot-{{ column.value }}"></i>{{ column.label }}</h2>
+      <span class="count">{{ column.tasks|length }}</span>
+      <a class="add" href="{% url 'task_create' %}?status={{ column.value }}" aria-label="Add task to {{ column.label }}">Add</a>
+    </header>
+
+    <div class="column-body">
+      {% for task in column.tasks %}
+      <article class="card{% if task.is_overdue %} card-overdue{% endif %}">
+        <a class="card-title" href="{% url 'task_update' task.pk %}">{{ task.title }}</a>
+        <div class="card-meta">{% include "partials/_task_meta.html" %}</div>
+        <div class="card-actions">
+          {% if task.status == 'todo' %}
+            {% include "partials/_move_button.html" with to="in_progress" label="Start" primary=True %}
+            {% include "partials/_move_button.html" with to="done" label="Done" %}
+          {% elif task.status == 'in_progress' %}
+            {% include "partials/_move_button.html" with to="done" label="Done" primary=True %}
+            {% include "partials/_move_button.html" with to="todo" label="Back to To do" %}
+          {% else %}
+            {% include "partials/_move_button.html" with to="in_progress" label="Reopen" %}
+          {% endif %}
+        </div>
+      </article>
+      {% empty %}
+      <p class="column-empty">Nothing here.</p>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</div>
+{% endblock %}

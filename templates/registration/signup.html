@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Create account{% endblock %}
+{% block auth %}
+<h1 class="auth-title">Create your account</h1>
+<form method="post" class="stack" novalidate>
+  {% csrf_token %}
+  {% for field in form %}{% include "partials/_field.html" %}{% endfor %}
+  <button type="submit" class="btn btn-primary btn-block">Create account</button>
+</form>
+<p class="auth-alt">Already registered? <a href="{% url 'login' %}">Log in</a></p>
+{% endblock %}

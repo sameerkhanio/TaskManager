@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Delete task{% endblock %}
+{% block heading %}Delete task{% endblock %}
+
+{% block content %}
+<form method="post" class="panel form-panel stack">
+  {% csrf_token %}
+  <p>Delete <strong>{{ object.title }}</strong>? This can't be undone.</p>
+  <div class="form-actions">
+    <button type="submit" class="btn btn-danger-solid">Delete task</button>
+    <a href="{% url 'task_update' object.pk %}" class="btn btn-ghost">Keep it</a>
+  </div>
+</form>
+{% endblock %}
